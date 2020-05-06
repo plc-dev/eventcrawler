@@ -95,7 +95,7 @@ const crawlTopEntities = async page => {
             titleHosts = await page.evaluate(() => {
                 name = document.querySelector('[data-testid="event_permalink_feature_line"] a').textContent
                 link = document.querySelector('[data-testid="event_permalink_feature_line"] a').href
-                return { name, tag: null, link };
+                return [{ name, tag: null, link }];
             });
         }
     } catch (e) {

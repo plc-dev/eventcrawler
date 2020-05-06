@@ -22,13 +22,14 @@ const manageCrawler = async (eventIds, db) => {
     const browser = await puppeteer.launch();
     try {
         let i = 0;
-        while (i < Object.keys(eventIds).length) {
-            const currentEventId = Object.keys(eventIds)[i];
+        let eventIdsCopy = JSON.parse(JSON.stringify(eventIds));
+        while (i < Object.keys(eventIdsCopy).length) {
+            const currentEventId = Object.keys(eventIdsCopy)[i];
             const scrapedEvent = await facebookEventCrawler(browser, currentEventId);
             if (scrapedEvent != null) {
                 const newEvents = scrapedEvent.newEvents;
                 delete scrapedEvent.newEvents;
-                eventIds = newEvents
+                eventIdsCopy = newEvents
                     .filter(e => !eventIds.hasOwnProperty(e.id))
                     .reduce(async (eventIds, e) => {
                         await persistToDB(db.EventIds, {
@@ -38,15 +39,15 @@ const manageCrawler = async (eventIds, db) => {
                         });
 
                         return { ...eventIds, [e.id]: e.id }
-                    }, eventIds);
-                updateDB(
+                    }, eventIdsCopy);
+                await updateDB(
                     db.EventIds, 
                     { eventId: currentEventId },
                     { status: "crawled" });
                 
                 scrapedEvent.mergedEntities = await mergeEntities(scrapedEvent);
 
-                persistToDB(db.Events, {
+                await persistToDB(db.Events, {
                     eventId: currentEventId,
                     eventTitle: scrapedEvent.title,
                     eventDescription: scrapedEvent.description,
@@ -65,6 +66,7 @@ const manageCrawler = async (eventIds, db) => {
         console.log(e)
     } finally {
         await browser.close()
+        return;
     }
 };
 
@@ -77,6 +79,7 @@ const manageCrawler = async (eventIds, db) => {
     if (!Object.keys(eventIdMap).length) {
         eventIdMap = {"272249427275412": "272249427275412"}
     }
+    console.log(eventIdMap)
 
     // initialization
     // const eventIdMap = {"272249427275412": "272249427275412"}
