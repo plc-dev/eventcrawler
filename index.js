@@ -31,8 +31,8 @@ const manageCrawler = async (eventIds, db) => {
                 delete scrapedEvent.newEvents;
                 eventIdsCopy = await newEvents
                     .filter(e => !eventIds.hasOwnProperty(e.id))
-                    .reduce(async (eventIds, e) => {
-                        await persistToDB(db.EventIds, {
+                    .reduce((eventIds, e) => {
+                        persistToDB(db.EventIds, {
                             eventId: e.id, 
                             eventLink: e.link, 
                             status: "uncrawled"
