@@ -79,7 +79,6 @@ const manageCrawler = async (eventIds, db) => {
     if (!Object.keys(eventIdMap).length) {
         eventIdMap = {"272249427275412": "272249427275412"}
     }
-    console.log(eventIdMap)
 
     // initialization
     // const eventIdMap = {"272249427275412": "272249427275412"}
