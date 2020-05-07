@@ -8,9 +8,9 @@ const mergeEntities = scrapedEvent => {
     let mergedEntities = [];
     if (topEntities != null) {
         const taggedNames = topEntities.map(entity => entity.name);
-        mergedEntities = [ descriptionEntities, bottomEntities ].filter(e => e != null).reduce((merged, entity) => {
+        mergedEntities = [ ...descriptionEntities, ...bottomEntities ].filter(e => e != null).reduce((merged, entity) => {
             if (!taggedNames.includes(entity.name)) {
-                merged = [ ...merged, { ...merged, tag: null } ];
+                merged = [ ...merged, { ...entity, tag: null } ];
             }
             return merged;
         }, topEntities);

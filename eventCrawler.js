@@ -135,7 +135,7 @@ const facebookEventCrawler = async (browser, eventId) => {
                 newEvents, 
                 title:                  eventTitle, 
                 description:            eventBody.text,
-                descriptionEntities:    eventBody ? eventBody.entities : null,
+                descriptionEntities:    eventBody.entities,
                 bottomEntities:         bottomHosts,
                 topEntities:            titleHosts
             };
