@@ -79,7 +79,8 @@ const crawlTopEntities = async page => {
     try {
         // hosts next to title
         await page.waitFor(() => !!document.querySelector('[data-testid="event_permalink_feature_line"]'));
-        if (await page.evaluate(() => document.querySelectorAll('[data-testid="event_permalink_feature_line"] a').length) > 1) {
+        if (await page.evaluate(() => document.querySelectorAll('[data-testid="event_permalink_feature_line"] a').length) > 1 
+            && await page.evaluate(() => /weitere Personen/.test(document.querySelector('[data-testid="event_permalink_feature_line"] a:last-child'))) ) {
             await page.click('[data-testid="event_permalink_feature_line"] a:last-child');
             await page.waitFor(() => !!document.querySelector('.profileBrowserDialog .uiList'));
             titleHosts = await page.evaluate(() => 
@@ -91,6 +92,14 @@ const crawlTopEntities = async page => {
                         return { name, tag, link };
                     })
                 );
+        } else if (await page.evaluate(() => document.querySelectorAll('[data-testid="event_permalink_feature_line"] a').length) > 1) {
+            titleHosts = await page.evaluate(() => {
+                return Array.from(document.querySelectorAll('[data-testid="event_permalink_feature_line"] a')).map(host => {
+                    name = host.textContent;
+                    link = host.href;
+                    return [{ name, tag: null, link }];
+                });
+            });
         } else {
             titleHosts = await page.evaluate(() => {
                 name = document.querySelector('[data-testid="event_permalink_feature_line"] a').textContent

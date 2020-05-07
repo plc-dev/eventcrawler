@@ -26,13 +26,13 @@ const manageCrawler = async (eventIds, db) => {
         while (i < Object.keys(eventIdsCopy).length) {
             const currentEventId = Object.keys(eventIdsCopy)[i];
             const scrapedEvent = await facebookEventCrawler(browser, currentEventId);
-            if (scrapedEvent != null) {
+            if (scrapedEvent != null && scrapedEvent.newEvents != null) {
                 const newEvents = scrapedEvent.newEvents;
                 delete scrapedEvent.newEvents;
-                eventIdsCopy = newEvents
+                eventIdsCopy = await newEvents
                     .filter(e => !eventIds.hasOwnProperty(e.id))
-                    .reduce(async (eventIds, e) => {
-                        await persistToDB(db.EventIds, {
+                    .reduce((eventIds, e) => {
+                        persistToDB(db.EventIds, {
                             eventId: e.id, 
                             eventLink: e.link, 
                             status: "uncrawled"
